@@ -33,8 +33,8 @@ public final class Constants {
 
   public static class ShooterConstants {
     // PWM ports/CAN IDs for motor controllers
-    public static final int kFeederID = 1005;
-    public static final int kShooterID = 1006;
+    public static final int kFeederID = 5;
+    public static final int kShooterID = 6;
 
     // Current limit for shooter and feed wheels
     // public static final int kShooterCurrentLimit = 80;

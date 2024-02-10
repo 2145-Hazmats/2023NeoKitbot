@@ -6,8 +6,15 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DrivetrainConstants.*;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import com.revrobotics.CANSparkMax;
@@ -25,14 +32,35 @@ public class CANDrivetrain extends SubsystemBase {
   /*Class member variables. These variables represent things the class needs to keep track of and use between
   different method calls. */
   DifferentialDrive m_drivetrain;
-
+  public static final ADIS16470_IMU gyro = new ADIS16470_IMU();
   /*Constructor. This method is called when an instance of the class is created. This should generally be used to set up
    * member variables and perform any configuration or set up necessary on hardware.
    */
-  WPI_TalonSRX leftFront = new WPI_TalonSRX(kLeftFrontID);
-  WPI_TalonSRX rightFront = new WPI_TalonSRX(kRightFrontID);
+  //WPI_TalonSRX leftFront = new WPI_TalonSRX(kLeftFrontID);
+  //WPI_TalonSRX rightFront = new WPI_TalonSRX(kRightFrontID);
 
+  CANSparkMax leftFront = new CANSparkMax(kLeftFrontID, MotorType.kBrushless);
+  CANSparkMax rightFront = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
+  private RelativeEncoder m_leftMotorEncoder = leftFront.getEncoder();
+  private RelativeEncoder m_rightMotorEncoder = rightFront.getEncoder();
+
+  private final double MotorTick2Feets = (6*Math.PI)/(12*12.75);
+
+  private double gyroPosition;
+  private double leftPosition; 
+  private double rightPosition;
+  public double distance;
+  
   public CANDrivetrain() {
+    m_rightMotorEncoder.setPositionConversionFactor(MotorTick2Feets);
+    m_leftMotorEncoder.setPositionConversionFactor(MotorTick2Feets);
+    m_rightMotorEncoder.setPosition(0);
+    m_leftMotorEncoder.setPosition(0);
+
+    //leftFront.enableVoltageCompensation(11.5);
+    //rightFront.enableVoltageCompensation(11.5);
+   
+    //m_drivetrain.setDeadband(0.025);
     // m_drivetrain.setSafetyEnabled(false);
     // CANSparkMax leftRear = new CANSparkMax(kLeftRearID, MotorType.kBrushed);
 
@@ -63,6 +91,11 @@ public class CANDrivetrain extends SubsystemBase {
     rightFront.set(speed);
   }
 
+  public void driveTurn(double speed) {
+    leftFront.set(-speed);
+    rightFront.set(speed);
+  }
+
   /*Method to control the drivetrain using arcade drive. Arcade drive takes a speed in the X (forward/back) direction
    * and a rotation about the Z (turning the robot about it's center) and uses these to control the drivetrain motors */
   public void arcadeDrive(double speed, double rotation) {
@@ -77,10 +110,23 @@ public class CANDrivetrain extends SubsystemBase {
     m_drivetrain.feed();
   }
 
+  public void ResetEncoders() {
+    m_leftMotorEncoder.setPosition(0);
+    m_rightMotorEncoder.setPosition(0);
+  }
+
 
   @Override
   public void periodic() {
+    leftPosition = m_leftMotorEncoder.getPosition()*MotorTick2Feets;
+    rightPosition = m_rightMotorEncoder.getPosition()*MotorTick2Feets;
+    distance = (m_leftMotorEncoder.getPosition() + m_rightMotorEncoder.getPosition()) / 2;
+    gyroPosition = gyro.getAngle(IMUAxis.kY);
 
+    SmartDashboard.putNumber("Gyro", gyroPosition);
+    SmartDashboard.putNumber("Left Drive Motor Encoder Value in Feets", m_leftMotorEncoder.getPosition());
+    SmartDashboard.putNumber("Right Drive Motor Encoder Value in Feets", m_rightMotorEncoder.getPosition());
+    SmartDashboard.putNumber("Average Drive Motor Encoder Value in Feets", distance);
     /*This method will be called once per scheduler run. It can be used for running tasks we know we want to update each
      * loop such as processing sensor data. Our drivetrain is simple so we don't have anything to put here */
   }

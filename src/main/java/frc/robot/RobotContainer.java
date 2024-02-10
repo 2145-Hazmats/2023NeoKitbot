@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
@@ -14,6 +15,7 @@ import frc.robot.commands.PrepareLaunch;
 import frc.robot.subsystems.CANDrivetrain;
 import frc.robot.subsystems.Pnumatics;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveForDistance;
 import frc.robot.subsystems.Shooter;
 
 // import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -59,7 +61,7 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 m_drivetrain.arcadeDrive(
-                    -m_driverController.getLeftY(), m_driverController.getRightX()),
+                    m_driverController.getLeftY(), m_driverController.getRightX()),
             m_drivetrain));
 
     /*Create an inline sequence to run when the operator presses and holds the A (green) button. Run the PrepareLaunch
@@ -78,7 +80,8 @@ public class RobotContainer {
 
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
-    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand());
+    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand());
+    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->m_shooter.blackLimitSwitch));
 
     // Pnumatic Commands
     m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
@@ -88,7 +91,6 @@ public class RobotContainer {
 
     // m_driverController.x().whileTrue(m_launcher.setRPMShooterCommand());
     // m_driverController.b().onTrue(Autos.exampleAuto(m_drivetrain));
-
     m_shooter.setDefaultCommand(m_shooter.stopCommand());
 
     m_driverController
@@ -107,8 +109,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.ShootAndDrive(m_drivetrain, m_shooter);
-    // return new LaunchNote(m_launcher).withTimeout(2);
+    //return Autos.ShootAndDrive(m_drivetrain, m_shooter);
+     return new DriveForDistance(m_drivetrain);
     //return null;
   }
 }

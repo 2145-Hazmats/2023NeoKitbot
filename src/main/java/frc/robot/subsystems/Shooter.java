@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -12,10 +13,12 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.LimitSwitchFunction;
 
 // import static frc.robot.Constants.ShooterConstants;
 // import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -30,17 +33,18 @@ public class Shooter extends SubsystemBase {
   private RelativeEncoder m_encoder;
   private double kP, kI, kD, kFF, desiredRPM;
   private double kS, kV, kA;
+  public boolean redLimitSwitch;
+  public boolean blackLimitSwitch;
 
   // why start variables up here and then give them value down there?
 
   public Shooter() {
-    m_shooterMotor = new CANSparkMax(6, MotorType.kBrushless);
+    m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterID, MotorType.kBrushless);
     m_encoder = m_shooterMotor.getEncoder();
-    m_feedMotor = new WPI_TalonSRX(5);
-
+    m_feedMotor = new WPI_TalonSRX(ShooterConstants.kFeederID);
     m_shooterMotor.restoreFactoryDefaults();
     m_feedMotor.configFactoryDefault(); // added this because I love factories
-
+ 
     m_shooterMotor.enableVoltageCompensation(11.5);
 
     m_pidController = m_shooterMotor.getPIDController();
@@ -55,6 +59,8 @@ public class Shooter extends SubsystemBase {
     m_pidController.setI(kI);
     m_pidController.setD(kD);
     m_pidController.setFF(kFF);
+
+    
 
     SmartDashboard.putNumber("P Gain", kP);
     SmartDashboard.putNumber("I Gain", kI);
@@ -74,6 +80,20 @@ public class Shooter extends SubsystemBase {
           this.stop();
         });
   }
+
+  /*public Command limitSwitchIntakeCommand() {
+    return this.startEnd(
+        () -> {
+          if (!m_limitswitch.get()) { // or two equal signs = false
+          m_feedMotor.set(ShooterConstants.kIntakeFeederSpeed);
+          m_shooterMotor.set(ShooterConstants.kIntakeShooterSpeed);
+          }
+        },
+        () -> {
+          this.stop();
+        });
+  }*/
+
 
   // Rotates the shooter motor
   public Command prepareNoteCommand() {
@@ -99,8 +119,18 @@ public class Shooter extends SubsystemBase {
     m_shooterMotor.set(speed);
   }
 
+  //public void getLimitSwitch() {
+    //m_limitswitch.get();
+  //}
+
   public void setFeedWheel(double speed) {
     m_feedMotor.set(speed);
+  }
+
+  public void Intake(double feedspeed, double shootspeed) {
+    m_feedMotor.set(feedspeed);
+    m_shooterMotor.set(shootspeed);
+
   }
 
   public void stop() {
@@ -148,8 +178,30 @@ public class Shooter extends SubsystemBase {
       desiredRPM = moddedRPM;
     }
 
+
+    redLimitSwitch = (m_feedMotor.isFwdLimitSwitchClosed() == 1);
+    blackLimitSwitch = (m_feedMotor.isRevLimitSwitchClosed() == 1);
+
+    SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
+    SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
+
+    //isLimitSwitchClosed = m_feedMotor.isFwdLimitSwitchClosed();
+
+    //LIMIT SWITCH STUFF
+
+    //if (m_feedMotor.isFwdLimitSwitchClosed()) {
+    //m_feedMotor.changeControlMode(ControlMode.Position);
+    //m_feedMotor.setPosition(0);
+   // }
+
+
+
+
+
+
     SmartDashboard.putNumber("ShooterVelocity", m_encoder.getVelocity());
     SmartDashboard.putNumber("ShooterVoltage", m_shooterMotor.getBusVoltage());
     SmartDashboard.putNumber("FeederSpeed", m_feedMotor.get());
   }
 }
+
