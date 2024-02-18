@@ -18,8 +18,10 @@ public final class Autos {
       //Commands.repeatingSequence(new RunCommand(() -> drivetrain.FeedDrivetrain(), drivetrain)),
       new RunCommand(() -> shooter.setLaunchWheel(1), shooter).withTimeout(1),
       new RunCommand(() -> shooter.setFeedWheel(1), shooter).withTimeout(.25),
-      new RunCommand(() -> drivetrain.driveTurn(.4),drivetrain).withTimeout(2.85),
-      new RunCommand(() -> drivetrain.driveForward(.4),drivetrain).withTimeout(2.98),
+      //new RunCommand(() -> drivetrain.driveTurn(.4),drivetrain).withTimeout(2.85),
+      new RunCommand(() -> drivetrain.driveForward(.4),drivetrain).withTimeout(1.5)
+      
+      /* 
       new RunCommand(() -> drivetrain.driveTurn(0),drivetrain).withTimeout(.25),
       //how to put intake command here
       new RunCommand(() -> shooter.Intake(-.25, -1), shooter).withTimeout(2),
@@ -29,7 +31,7 @@ public final class Autos {
       new RunCommand(() -> drivetrain.driveTurn(0),drivetrain).withTimeout(.25),
       new RunCommand(() -> shooter.setLaunchWheel(1), shooter).withTimeout(1),
       new RunCommand(() -> shooter.setFeedWheel(1), shooter).withTimeout(.25)
-
+*/
 
       /*Commands.parallel( 
         //drivetrain.arcadeDrive(0, 0),

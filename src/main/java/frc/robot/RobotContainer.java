@@ -136,8 +136,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return Autos.ShootAndDrive(m_drivetrain, m_shooter);
-     return new DriveForDistance(m_drivetrain, -10);
+    return Autos.ShootAndDrive(m_drivetrain, m_shooter);
+     //return new DriveForDistance(m_drivetrain, -10);
     //return null;
   }
 }
