@@ -14,14 +14,14 @@ public class DriveForDistance extends Command {
   CANDrivetrain drivetrain;
   
   double error;
-  double Setpoint = -10;
+  double Setpoint; 
   double kp = .28;
   double SPEED;
   
   
-  public DriveForDistance(CANDrivetrain drie) {
+  public DriveForDistance(CANDrivetrain drie, double setpoint) {
     drivetrain = drie;
-    
+    Setpoint = setpoint;
     addRequirements(drie);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -53,7 +53,7 @@ public class DriveForDistance extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (drivetrain.distance >= 30);
+    return (drivetrain.distance >= 10);
     
   }
 }

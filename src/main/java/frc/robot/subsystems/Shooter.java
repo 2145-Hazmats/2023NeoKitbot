@@ -7,9 +7,6 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -17,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.LimitSwitchFunction;
 
@@ -26,27 +24,45 @@ import frc.robot.commands.LimitSwitchFunction;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new PIDLauncher. */
-  private CANSparkMax m_shooterMotor;
+  private WPI_TalonSRX m_leftShooterMotor;
+  private WPI_TalonSRX m_rightShooterMotor;
 
-  private WPI_TalonSRX m_feedMotor;
-  private SparkMaxPIDController m_pidController;
-  private RelativeEncoder m_encoder;
-  private double kP, kI, kD, kFF, desiredRPM;
-  private double kS, kV, kA;
+  private WPI_TalonSRX m_leftFeedMotor;
+  private WPI_TalonSRX m_rightFeedMotor;
+  //private SparkMaxPIDController m_pidController;
+  //private RelativeEncoder m_encoder;
+  //private double kP, kI, kD, kFF, desiredRPM;
+  //private double kS, kV, kA;
   public boolean redLimitSwitch;
   public boolean blackLimitSwitch;
 
   // why start variables up here and then give them value down there?
 
   public Shooter() {
-    m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterID, MotorType.kBrushless);
-    m_encoder = m_shooterMotor.getEncoder();
-    m_feedMotor = new WPI_TalonSRX(ShooterConstants.kFeederID);
-    m_shooterMotor.restoreFactoryDefaults();
-    m_feedMotor.configFactoryDefault(); // added this because I love factories
+    //m_shooterMotor = new CANSparkMax(ShooterConstants.kShooterID, MotorType.kBrushless);
+    m_leftShooterMotor = new WPI_TalonSRX(ShooterConstants.kleftShooterID);
+    m_rightShooterMotor = new WPI_TalonSRX(ShooterConstants.krightShooterID);
+    m_leftFeedMotor = new WPI_TalonSRX(ShooterConstants.kleftFeederID);
+    m_rightFeedMotor = new WPI_TalonSRX(ShooterConstants.krightFeederID);
+    
+    //m_encoder = m_shooterMotor.getEncoder();
+    m_leftFeedMotor.configFactoryDefault(); // added this because I love factories
+    m_rightFeedMotor.configFactoryDefault();
+    m_leftShooterMotor.configFactoryDefault();
+    m_rightShooterMotor.configFactoryDefault();
  
-    m_shooterMotor.enableVoltageCompensation(11.5);
+    //motor controller group thing
+    //m_rightFeedMotor.follow(m_leftFeedMotor);
+    //m_rightShooterMotor.follow(m_leftShooterMotor);
+    
+    //mirrors master motor
+    m_rightFeedMotor.setInverted(true);
+    m_rightShooterMotor.setInverted(true);
 
+
+    //m_leftShooterMotor.enableVoltageCompensation(11.5);
+
+    /*
     m_pidController = m_shooterMotor.getPIDController();
 
     kP = 0.00005;
@@ -67,19 +83,23 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("D Gain", kD);
     SmartDashboard.putNumber("Feed Forward", kFF);
     SmartDashboard.putNumber("Set Velocity", desiredRPM);
+  */
   }
 
   // Intake command
   public Command intakeCommand() {
     return this.startEnd(
         () -> {
-          m_feedMotor.set(ShooterConstants.kIntakeFeederSpeed);
-          m_shooterMotor.set(ShooterConstants.kIntakeShooterSpeed);
+          m_leftFeedMotor.set(ShooterConstants.kIntakeFeederSpeed);
+          m_leftShooterMotor.set(ShooterConstants.kIntakeShooterSpeed);
+          m_rightFeedMotor.set(ShooterConstants.kIntakeFeederSpeed);
+          m_rightShooterMotor.set(ShooterConstants.kIntakeShooterSpeed);
         },
         () -> {
           this.stop();
         });
   }
+  
 
   /*public Command limitSwitchIntakeCommand() {
     return this.startEnd(
@@ -96,10 +116,11 @@ public class Shooter extends SubsystemBase {
 
 
   // Rotates the shooter motor
+  /*
   public Command prepareNoteCommand() {
     return this.run(
         () -> {
-          m_pidController.setReference(desiredRPM, CANSparkMax.ControlType.kVelocity);
+         // m_pidController.setReference(desiredRPM, CANSparkMax.ControlType.kVelocity);
         });
   }
 
@@ -114,9 +135,11 @@ public class Shooter extends SubsystemBase {
           stop();
         });
   }
+  */
 
   public void setLaunchWheel(double speed) {
-    m_shooterMotor.set(speed);
+    m_leftShooterMotor.set(speed);
+    m_rightShooterMotor.set(speed);
   }
 
   //public void getLimitSwitch() {
@@ -124,21 +147,48 @@ public class Shooter extends SubsystemBase {
   //}
 
   public void setFeedWheel(double speed) {
-    m_feedMotor.set(speed);
+    m_leftFeedMotor.set(speed);
+    m_rightFeedMotor.set(speed);
   }
 
   public void Intake(double feedspeed, double shootspeed) {
-    m_feedMotor.set(feedspeed);
-    m_shooterMotor.set(shootspeed);
-
+    m_leftFeedMotor.set(feedspeed);
+    m_leftShooterMotor.set(shootspeed);
+    m_rightFeedMotor.set(feedspeed);
+    m_rightShooterMotor.set(shootspeed);
   }
+public Command readyAmpCommand() {
+    return this.startEnd(
+        () -> {
+    m_leftShooterMotor.set(Constants.ShooterConstants.kAmpLeftShooter);
+    m_rightShooterMotor.set(Constants.ShooterConstants.kAmpRightShooter);
+        },
+        () -> {
+          this.stop();
+        });
+  }
+  public Command playAmpCommand() {
+    return this.startEnd(
+        () -> {
+    m_leftShooterMotor.set(Constants.ShooterConstants.kAmpLeftShooter);
+    m_rightShooterMotor.set(Constants.ShooterConstants.kAmpRightShooter);
+    m_leftFeedMotor.set(Constants.ShooterConstants.kAmpLeftFeeder);
+    m_rightFeedMotor.set(Constants.ShooterConstants.kAmpRightFeeder);
+        },
+        () -> {
+          this.stop();
+        });
+  }
+  
 
   public void stop() {
-    m_pidController.setReference(
-        0,
-        CANSparkMax.ControlType.kVelocity); // why do you need this alonside the motor stop stuff?
-    m_shooterMotor.set(0);
-    m_feedMotor.set(0);
+   // m_pidController.setReference(
+   //     0,
+   //     CANSparkMax.ControlType.kVelocity); // why do you need this alonside the motor stop stuff?
+    m_leftShooterMotor.set(0);
+    m_leftFeedMotor.set(0);
+    m_rightShooterMotor.set(0);
+    m_rightFeedMotor.set(0);
   }
 
   public Command stopCommand() {
@@ -148,9 +198,16 @@ public class Shooter extends SubsystemBase {
         });
   }
 
+
   @Override
   public void periodic() {
-    // Get PID coefficients from SmartDashboard
+    redLimitSwitch = (m_leftFeedMotor.isFwdLimitSwitchClosed() == 1);
+    blackLimitSwitch = (m_leftFeedMotor.isRevLimitSwitchClosed() == 1);
+
+    SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
+    SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
+  }
+   /*  // Get PID coefficients from SmartDashboard
     double p = SmartDashboard.getNumber("P Gain", 0); 
     double i = SmartDashboard.getNumber("I Gain", 0);
     double d = SmartDashboard.getNumber("D Gain", 0);
@@ -177,13 +234,9 @@ public class Shooter extends SubsystemBase {
     if ((moddedRPM != desiredRPM)) {
       desiredRPM = moddedRPM;
     }
+*/
 
-
-    redLimitSwitch = (m_feedMotor.isFwdLimitSwitchClosed() == 1);
-    blackLimitSwitch = (m_feedMotor.isRevLimitSwitchClosed() == 1);
-
-    SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
-    SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
+    
 
     //isLimitSwitchClosed = m_feedMotor.isFwdLimitSwitchClosed();
 
@@ -199,9 +252,10 @@ public class Shooter extends SubsystemBase {
 
 
 
-    SmartDashboard.putNumber("ShooterVelocity", m_encoder.getVelocity());
-    SmartDashboard.putNumber("ShooterVoltage", m_shooterMotor.getBusVoltage());
-    SmartDashboard.putNumber("FeederSpeed", m_feedMotor.get());
-  }
+    //SmartDashboard.putNumber("ShooterVelocity", m_encoder.getVelocity());
+    //SmartDashboard.putNumber("ShooterVoltage", m_shooterMotor.getBusVoltage());
+    //SmartDashboard.putNumber("FeederSpeed", m_feedMotor.get());
 }
+  
+  
 

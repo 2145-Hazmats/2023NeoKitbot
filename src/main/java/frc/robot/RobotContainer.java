@@ -12,6 +12,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.LaunchNote;
 import frc.robot.commands.PrepareLaunch;
+import frc.robot.commands.PrepareLaunchSlow;
 import frc.robot.subsystems.CANDrivetrain;
 import frc.robot.subsystems.Pnumatics;
 import frc.robot.commands.Autos;
@@ -69,11 +70,36 @@ public class RobotContainer {
     m_driverController
         .a()
         .whileTrue(
-            new PrepareLaunch(m_shooter)
+            new PrepareLaunch(m_shooter, 1)
                 .withTimeout(ShooterConstants.kShooterTimeDelay)
                 .andThen(new LaunchNote(m_shooter))
                 .handleInterrupt(() -> m_shooter.stop()));
 
+      m_driverController 
+      .y()      
+        .whileTrue(
+            new PrepareLaunch(m_shooter, .37)
+                .withTimeout(ShooterConstants.kShooterTimeDelay)
+                .andThen(new LaunchNote(m_shooter))
+                .handleInterrupt(() -> m_shooter.stop()));
+
+    m_driverController
+    .x()
+    .whileTrue(m_shooter.readyAmpCommand().withTimeout(ShooterConstants.kShooterTimeDelay)
+    .andThen(m_shooter.playAmpCommand())
+    );
+                
+   /* m_driverController
+        .b()
+        .whileTrue(
+            new PrepareLaunchSlow(m_shooter)
+                .withTimeout(ShooterConstants.kShooterTimeDelay)
+                .alongWith(new DriveForDistance(m_drivetrain, .17))
+                .withTimeout(ShooterConstants.kShooterTimeDelay)
+                .andThen(new LaunchNote(m_shooter)).withTimeout(5)
+                //.andThen(new DriveForDistance(m_drivetrain, -.17))
+                .handleInterrupt(() -> m_shooter.stop()));
+*/
     //      m_driverController
     // .a()
     // .whileTrue(new LaunchNote(m_launcher));
@@ -82,7 +108,7 @@ public class RobotContainer {
     // left Bumper
     //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand());
     m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->m_shooter.blackLimitSwitch));
-
+    
     // Pnumatic Commands
     m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
     m_driverController.povDown().onTrue(m_pnumatics.SuckPistonCommand());
@@ -93,13 +119,14 @@ public class RobotContainer {
     // m_driverController.b().onTrue(Autos.exampleAuto(m_drivetrain));
     m_shooter.setDefaultCommand(m_shooter.stopCommand());
 
-    m_driverController
+    /*m_driverController
         .x()
         .whileTrue(
             m_shooter
                 .prepareNoteCommand()
                 .withTimeout(ShooterConstants.kShooterTimeDelay)
                 .andThen(m_shooter.shootNoteCommand()));
+  */
   }
 
   /**
@@ -110,7 +137,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //return Autos.ShootAndDrive(m_drivetrain, m_shooter);
-     return new DriveForDistance(m_drivetrain);
+     return new DriveForDistance(m_drivetrain, -10);
     //return null;
   }
 }

@@ -9,16 +9,16 @@ import static frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class PrepareLaunch extends Command {
+public class PrepareLaunchSlow extends Command {
   Shooter m_launcher;
-  double WheelSpeed;
+
   // CANLauncher m_launcher;
 
   /** Creates a new PrepareLaunch. */
-  public PrepareLaunch(Shooter launcher, double launchwheelsped) {
+  public PrepareLaunchSlow(Shooter launcher) {
     // save the launcher system internally
     m_launcher = launcher;
-    WheelSpeed = launchwheelsped;
+
     // indicate that this command requires the launcher system
     addRequirements(m_launcher);
   }
@@ -27,7 +27,7 @@ public class PrepareLaunch extends Command {
   @Override
   public void initialize() {
     // Set launch wheel to speed, keep feed wheel at 0 to let launch wheel spin up.
-    m_launcher.setLaunchWheel(WheelSpeed);
+    m_launcher.setLaunchWheel(.05);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

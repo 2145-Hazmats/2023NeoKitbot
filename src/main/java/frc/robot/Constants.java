@@ -33,8 +33,10 @@ public final class Constants {
 
   public static class ShooterConstants {
     // PWM ports/CAN IDs for motor controllers
-    public static final int kFeederID = 5;
-    public static final int kShooterID = 6;
+    public static final int kleftFeederID = 5;
+    public static final int kleftShooterID = 6;
+    public static final int krightFeederID = 7;
+    public static final int krightShooterID = 8;
 
     // Current limit for shooter and feed wheels
     // public static final int kShooterCurrentLimit = 80;
@@ -43,15 +45,23 @@ public final class Constants {
     // Speeds for wheels when intaking and launching. Intake speeds are negative to run the wheels
     // in reverse
     public static final double kShooterSpeed = 1;
-    public static final double kFeederSpeed = 1;
+    public static final double kFeederSpeed = .8;
+
     public static final double kIntakeShooterSpeed = -1;
     public static final double kIntakeFeederSpeed = -.2;
+  
 
-    public static final double kShooterTimeDelay = 1.0;
+    public static final double kShooterTimeDelay = .75;
 
     public static final double kShooterP = 0.00005;
     public static final double kShooterI = 0.0;
     public static final double kShooterD = 0.0;
     public static final double kShooterFF = 0.0002;
+
+    public static final double kAmpLeftShooter = .25;
+  public static final double kAmpRightShooter = -.4;
+  public static final double kAmpLeftFeeder = .85;
+  public static final double kAmpRightFeeder = .85;
+
   }
 }
