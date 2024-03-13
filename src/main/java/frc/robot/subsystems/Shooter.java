@@ -35,6 +35,8 @@ public class Shooter extends SubsystemBase {
   //private double kS, kV, kA;
   public boolean redLimitSwitch;
   public boolean blackLimitSwitch;
+  private static DigitalInput noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorChannel);
+
 
   // why start variables up here and then give them value down there?
 
@@ -197,6 +199,12 @@ public Command readyAmpCommand() {
           stop();
         });
   }
+
+
+  public static boolean noteSensorTriggered() {
+    return noteSensor.get();
+  }
+  
 
 
   @Override
