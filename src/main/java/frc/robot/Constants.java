@@ -59,9 +59,11 @@ public final class Constants {
     public static final double kShooterFF = 0.0002;
 
     public static final double kAmpLeftShooter = .25;
-  public static final double kAmpRightShooter = -.4;
-  public static final double kAmpLeftFeeder = .85;
-  public static final double kAmpRightFeeder = .85;
+    public static final double kAmpRightShooter = -.4;
+    public static final double kAmpLeftFeeder = .85;
+    public static final double kAmpRightFeeder = .85;
+
+    public static final int kNoteSensorChannel = 9;
 
   }
 }

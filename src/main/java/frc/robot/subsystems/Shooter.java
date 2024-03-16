@@ -214,6 +214,7 @@ public Command readyAmpCommand() {
 
     SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
     SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
+    SmartDashboard.putData("IR Sensor", noteSensor);
   }
    /*  // Get PID coefficients from SmartDashboard
     double p = SmartDashboard.getNumber("P Gain", 0); 
