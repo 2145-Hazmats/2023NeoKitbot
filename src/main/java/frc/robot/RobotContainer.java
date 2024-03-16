@@ -107,8 +107,9 @@ public class RobotContainer {
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
     //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand());
-    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->m_shooter.blackLimitSwitch));
-    
+    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->m_shooter.blackLimitSwitch));
+    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->!Shooter.noteSensorTriggered()));
+    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->!m_shooter.laser));
     // Pnumatic Commands
     m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
     m_driverController.povDown().onTrue(m_pnumatics.SuckPistonCommand());

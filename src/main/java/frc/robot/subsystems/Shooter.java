@@ -35,6 +35,7 @@ public class Shooter extends SubsystemBase {
   //private double kS, kV, kA;
   public boolean redLimitSwitch;
   public boolean blackLimitSwitch;
+  public boolean laser;
   private static DigitalInput noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorChannel);
 
 
@@ -211,7 +212,7 @@ public Command readyAmpCommand() {
   public void periodic() {
     redLimitSwitch = (m_leftFeedMotor.isFwdLimitSwitchClosed() == 1);
     blackLimitSwitch = (m_leftFeedMotor.isRevLimitSwitchClosed() == 1);
-
+    laser = noteSensor.get();
     SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
     SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
     SmartDashboard.putData("IR Sensor", noteSensor);
