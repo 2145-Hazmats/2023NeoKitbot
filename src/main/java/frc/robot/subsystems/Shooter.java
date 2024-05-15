@@ -4,19 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.LimitSwitchFunction;
+//import frc.robot.commands.LimitSwitchFunction;
 
 // import static frc.robot.Constants.ShooterConstants;
 // import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -35,8 +30,6 @@ public class Shooter extends SubsystemBase {
   //private double kS, kV, kA;
   public boolean redLimitSwitch;
   public boolean blackLimitSwitch;
-  public boolean laser;
-  private static DigitalInput noteSensor = new DigitalInput(Constants.ShooterConstants.kNoteSensorChannel);
 
 
   // why start variables up here and then give them value down there?
@@ -140,14 +133,19 @@ public class Shooter extends SubsystemBase {
   }
   */
 
+  public boolean isRedSwitchPressed() {
+   return  (redLimitSwitch);
+  }
+
+  public boolean isBlackSwitchPressed() {
+    return  (blackLimitSwitch);
+  }
+
+
   public void setLaunchWheel(double speed) {
     m_leftShooterMotor.set(speed);
     m_rightShooterMotor.set(speed);
   }
-
-  //public void getLimitSwitch() {
-    //m_limitswitch.get();
-  //}
 
   public void setFeedWheel(double speed) {
     m_leftFeedMotor.set(speed);
@@ -185,9 +183,6 @@ public Command readyAmpCommand() {
   
 
   public void stop() {
-   // m_pidController.setReference(
-   //     0,
-   //     CANSparkMax.ControlType.kVelocity); // why do you need this alonside the motor stop stuff?
     m_leftShooterMotor.set(0);
     m_leftFeedMotor.set(0);
     m_rightShooterMotor.set(0);
@@ -202,20 +197,12 @@ public Command readyAmpCommand() {
   }
 
 
-  public static boolean noteSensorTriggered() {
-    return noteSensor.get();
-  }
-  
-
-
   @Override
   public void periodic() {
     redLimitSwitch = (m_leftFeedMotor.isFwdLimitSwitchClosed() == 1);
     blackLimitSwitch = (m_leftFeedMotor.isRevLimitSwitchClosed() == 1);
-    laser = noteSensor.get();
-    SmartDashboard.putBoolean("Reb Switch", redLimitSwitch);
+    SmartDashboard.putBoolean("Red Switch", redLimitSwitch);
     SmartDashboard.putBoolean("Black Switch", blackLimitSwitch);
-    SmartDashboard.putData("IR Sensor", noteSensor);
   }
    /*  // Get PID coefficients from SmartDashboard
     double p = SmartDashboard.getNumber("P Gain", 0); 
@@ -245,22 +232,8 @@ public Command readyAmpCommand() {
       desiredRPM = moddedRPM;
     }
 */
-
-    
-
+//ONLY LIMIT SWITCH THING
     //isLimitSwitchClosed = m_feedMotor.isFwdLimitSwitchClosed();
-
-    //LIMIT SWITCH STUFF
-
-    //if (m_feedMotor.isFwdLimitSwitchClosed()) {
-    //m_feedMotor.changeControlMode(ControlMode.Position);
-    //m_feedMotor.setPosition(0);
-   // }
-
-
-
-
-
 
     //SmartDashboard.putNumber("ShooterVelocity", m_encoder.getVelocity());
     //SmartDashboard.putNumber("ShooterVoltage", m_shooterMotor.getBusVoltage());

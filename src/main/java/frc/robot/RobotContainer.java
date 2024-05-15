@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.IsPROLicensedValue;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -14,7 +16,8 @@ import frc.robot.commands.LaunchNote;
 import frc.robot.commands.PrepareLaunch;
 import frc.robot.commands.PrepareLaunchSlow;
 import frc.robot.subsystems.CANDrivetrain;
-import frc.robot.subsystems.Pnumatics;
+import frc.robot.subsystems.LimelightSubsystem;
+//import frc.robot.subsystems.Pnumatics;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveForDistance;
 import frc.robot.subsystems.Shooter;
@@ -33,8 +36,8 @@ public class RobotContainer {
   // private final CANDrivetrain m_drivetrain = new CANDrivetrain();
   // private final CANLauncher m_launcher = new CANLauncher();
   private final Shooter m_shooter = new Shooter();
-  private final Pnumatics m_pnumatics = new Pnumatics();
-
+  //private final Pnumatics m_pnumatics = new Pnumatics();
+  private final LimelightSubsystem m_LimelightSubsystem = new LimelightSubsystem();
   // private final PIDLauncher m_pid = new PIDLauncher();
   // private final CANLauncher m_launcher = new CANLauncher();
 
@@ -100,34 +103,20 @@ public class RobotContainer {
                 //.andThen(new DriveForDistance(m_drivetrain, -.17))
                 .handleInterrupt(() -> m_shooter.stop()));
 */
-    //      m_driverController
-    // .a()
-    // .whileTrue(new LaunchNote(m_launcher));
-
+   
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
-    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand());
-    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->m_shooter.blackLimitSwitch));
-    //m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->!Shooter.noteSensorTriggered()));
-    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->!m_shooter.laser));
+   
+    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->(m_shooter.redLimitSwitch))); //might work
+    m_driverController.rightBumper().whileTrue(m_shooter.intakeCommand().until(()->(m_shooter.isBlackSwitchPressed()))); //might work
     // Pnumatic Commands
-    m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
-    m_driverController.povDown().onTrue(m_pnumatics.SuckPistonCommand());
-    m_driverController.povLeft().toggleOnTrue(m_pnumatics.CompressCommand());
+    //m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
+    //m_driverController.povDown().onTrue(m_pnumatics.SuckPistonCommand());
+    //m_driverController.povLeft().toggleOnTrue(m_pnumatics.CompressCommand());
     // m_driverController.povRight().onTrue(m_pnumatics.StopCompressCommand());
 
-    // m_driverController.x().whileTrue(m_launcher.setRPMShooterCommand());
     // m_driverController.b().onTrue(Autos.exampleAuto(m_drivetrain));
     m_shooter.setDefaultCommand(m_shooter.stopCommand());
-
-    /*m_driverController
-        .x()
-        .whileTrue(
-            m_shooter
-                .prepareNoteCommand()
-                .withTimeout(ShooterConstants.kShooterTimeDelay)
-                .andThen(m_shooter.shootNoteCommand()));
-  */
   }
 
   /**
