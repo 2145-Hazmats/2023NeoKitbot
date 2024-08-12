@@ -70,28 +70,44 @@ public class RobotContainer {
 
     /*Create an inline sequence to run when the operator presses and holds the A (green) button. Run the PrepareLaunch
      * command for 1 seconds and then run the LaunchNote command */
-    m_driverController
+    /*m_driverController
         .a()
         .whileTrue(
             new PrepareLaunch(m_shooter, 1)
                 .withTimeout(ShooterConstants.kShooterTimeDelay)
                 .andThen(new LaunchNote(m_shooter))
-                .handleInterrupt(() -> m_shooter.stop()));
+                .handleInterrupt(() -> m_shooter.stop()));*/
 
-      m_driverController 
+  
+     m_driverController
+    .y()
+    .whileTrue(
+        new RunCommand(
+            () ->
+                m_drivetrain.FaceTowardSubwoofer(m_LimelightSubsystem.getXcoordinate(),m_LimelightSubsystem.getYcoordinate())));
+     /*  m_driverController 
       .y()      
         .whileTrue(
             new PrepareLaunch(m_shooter, .37)
                 .withTimeout(ShooterConstants.kShooterTimeDelay)
                 .andThen(new LaunchNote(m_shooter))
-                .handleInterrupt(() -> m_shooter.stop()));
+                .handleInterrupt(() -> m_shooter.stop()));*/
 
     m_driverController
     .x()
     .whileTrue(m_shooter.readyAmpCommand().withTimeout(ShooterConstants.kShooterTimeDelay)
     .andThen(m_shooter.playAmpCommand())
     );
-                
+
+  
+    m_driverController
+    .a()
+    .whileTrue(
+        new RunCommand(
+            () ->
+                m_drivetrain.FaceStraight(
+                    //m_LimelightSubsystem.getTargetRotation())));
+                m_drivetrain.getGyro()))); //This is a rotation conversion rate from random stuff to degrees
    /* m_driverController
         .b()
         .whileTrue(
@@ -107,8 +123,8 @@ public class RobotContainer {
     // Set up a binding to run the intake command while the operator is pressing and holding the
     // left Bumper
    
-    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->(m_shooter.redLimitSwitch))); //might work
-    m_driverController.rightBumper().whileTrue(m_shooter.intakeCommand().until(()->(m_shooter.isBlackSwitchPressed()))); //might work
+   
+    m_driverController.leftBumper().whileTrue(m_shooter.intakeCommand().until(()->(m_shooter.isBlackSwitchPressed()))); //might work
     // Pnumatic Commands
     //m_driverController.povUp().onTrue(m_pnumatics.ShootPistonCommand());
     //m_driverController.povDown().onTrue(m_pnumatics.SuckPistonCommand());
@@ -126,8 +142,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.ShootAndDrive(m_drivetrain, m_shooter);
-     //return new DriveForDistance(m_drivetrain, -10);
+    //return Autos.ShootAndDrive(m_drivetrain, m_shooter);
+     return new DriveForDistance(m_drivetrain, -8);
     //return null;
   }
 }

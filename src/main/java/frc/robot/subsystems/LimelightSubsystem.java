@@ -29,6 +29,14 @@ public class LimelightSubsystem extends SubsystemBase {
         // Otherwise, return 0
         return 0;
     }
+    public double getXcoordinate() {
+        return LimelightHelpers.getBotPose2d("").getX();
+
+    } 
+    public double getYcoordinate() {
+        return LimelightHelpers.getBotPose2d("").getY();
+
+    } 
 
 
     // Custom method to get camtransformation from network table

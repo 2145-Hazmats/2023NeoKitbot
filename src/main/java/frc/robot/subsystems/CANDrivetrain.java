@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DrivetrainConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -16,7 +18,7 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants;
 // import com.revrobotics.CANSparkMax;
 // import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  import edu.wpi.first.wpilibj2.command.Command;
@@ -43,6 +45,8 @@ public class CANDrivetrain extends SubsystemBase {
   CANSparkMax rightFront = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
   private RelativeEncoder m_leftMotorEncoder = leftFront.getEncoder();
   private RelativeEncoder m_rightMotorEncoder = rightFront.getEncoder();
+
+  double targetAngle = 0;
 
   private final double MotorTick2Feets = (6*Math.PI)/(12*12.75);
 
@@ -96,6 +100,22 @@ public class CANDrivetrain extends SubsystemBase {
     rightFront.set(speed);
   }
 
+  public void FaceTowardSubwoofer(double Xcurrentpose, double Ycurrentpose) {
+    double side1 = Constants.DrivetrainConstants.xsubwoofer - Xcurrentpose;
+    double side2 = Constants.DrivetrainConstants.ysubwoofer - Ycurrentpose;
+    targetAngle = Math.atan(side2/side1);
+  }
+
+
+  public void FaceStraight(double currentrotation) {
+    double error =  -targetAngle - currentrotation;
+
+    
+    leftFront.set(-error*.0525); 
+    rightFront.set(error*.0525); 
+
+  }
+
   /*Method to control the drivetrain using arcade drive. Arcade drive takes a speed in the X (forward/back) direction
    * and a rotation about the Z (turning the robot about it's center) and uses these to control the drivetrain motors */
   public void arcadeDrive(double speed, double rotation) {
@@ -115,6 +135,9 @@ public class CANDrivetrain extends SubsystemBase {
     m_rightMotorEncoder.setPosition(0);
   }
 
+  public double getGyro() {
+    return gyroPosition* Constants.DrivetrainConstants.GyrotoDeg;
+  }
 
   @Override
   public void periodic() {
@@ -127,6 +150,7 @@ public class CANDrivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Drive Motor Encoder Value in Feets", m_leftMotorEncoder.getPosition());
     SmartDashboard.putNumber("Right Drive Motor Encoder Value in Feets", m_rightMotorEncoder.getPosition());
     SmartDashboard.putNumber("Average Drive Motor Encoder Value in Feets", distance);
+    SmartDashboard.putNumber("NEW Targetangle", targetAngle );
     /*This method will be called once per scheduler run. It can be used for running tasks we know we want to update each
      * loop such as processing sensor data. Our drivetrain is simple so we don't have anything to put here */
   }

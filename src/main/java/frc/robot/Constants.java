@@ -26,7 +26,10 @@ public final class Constants {
     public static final int kLeftFrontID = 2;
     // public static final int kRightRearID = 3;
     public static final int kRightFrontID = 4;
-
+    public static final double xsubwoofer = -7.7;
+    public static final double ysubwoofer = 1.4; //units are in meters.
+    public static final double GyrotoDeg = 21.7303823;
+    // we think the center is (0,0)
     // Current limit for drivetrain motors
     // public static final int kCurrentLimit = 60;
   }
